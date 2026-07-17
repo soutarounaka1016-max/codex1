@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シンプル ToDo アプリ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app" aria-labelledby="app-title">
+    <section class="hero">
+      <p class="eyebrow">HTML・CSS・JavaScript</p>
+      <h1 id="app-title">シンプル ToDo</h1>
+      <p class="lead">今日やることを追加して、完了したらチェックしましょう。</p>
+    </section>
+
+    <form id="todo-form" class="todo-form" autocomplete="off">
+      <label class="sr-only" for="todo-input">新しいToDo</label>
+      <input id="todo-input" type="text" placeholder="例: 買い物に行く" maxlength="80" required>
+      <button type="submit">追加</button>
+    </form>
+
+    <section class="toolbar" aria-label="ToDoの操作">
+      <p id="todo-count">0 件の未完了</p>
+      <button id="clear-completed" type="button">完了済みを削除</button>
+    </section>
+
+    <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
+
+    <p id="empty-state" class="empty-state">まだToDoがありません。上の入力欄から追加してください。</p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
