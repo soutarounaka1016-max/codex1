@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シンプル 勉強管理アプリ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app" aria-labelledby="app-title">
+    <section class="hero">
+      <p class="eyebrow">HTML・CSS・JavaScript</p>
+      <h1 id="app-title">シンプル勉強管理</h1>
+      <p class="lead">今日の勉強タスクに科目を付けて、完了したらチェックしましょう。</p>
+    </section>
+
+    <form id="todo-form" class="todo-form" autocomplete="off">
+      <label class="sr-only" for="todo-input">新しい勉強タスク</label>
+      <input id="todo-input" type="text" placeholder="例: 問題集を3ページ解く" maxlength="80" required>
+
+      <label class="sr-only" for="subject-select">科目</label>
+      <select id="subject-select" required>
+        <option value="数学">数学</option>
+        <option value="英語">英語</option>
+        <option value="物理">物理</option>
+        <option value="化学">化学</option>
+      </select>
+
+      <button type="submit">追加</button>
+    </form>
+
+    <section class="toolbar" aria-label="勉強タスクの操作">
+      <p id="todo-count">0 件の未完了</p>
+      <button id="clear-completed" type="button">完了済みを削除</button>
+    </section>
+
+    <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
+
+    <p id="empty-state" class="empty-state">まだ勉強タスクがありません。上の入力欄から追加してください。</p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
