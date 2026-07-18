@@ -17,6 +17,13 @@
     <form id="todo-form" class="todo-form" autocomplete="off">
       <label class="sr-only" for="todo-input">新しいToDo</label>
       <input id="todo-input" type="text" placeholder="例: 買い物に行く" maxlength="80" required>
+      <label class="sr-only" for="subject-select">科目</label>
+      <select id="subject-select" aria-label="科目を選択">
+        <option value="数学">数学</option>
+        <option value="英語">英語</option>
+        <option value="物理">物理</option>
+        <option value="化学">化学</option>
+      </select>
       <button type="submit">追加</button>
     </form>
 
