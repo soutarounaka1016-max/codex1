@@ -125,6 +125,12 @@ h1 {
   transform: translateY(-1px);
 }
 
+.form-hint {
+  margin: -6px 0 18px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .toolbar {
   display: flex;
   align-items: center;

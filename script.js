@@ -21,12 +21,12 @@ form.addEventListener('submit', (event) => {
     return;
   }
 
-  todos.push({
+  todos.push(normalizeTodo({
     id: createTodoId(),
     text,
-    subject: normalizeSubject(subjectSelect.value),
+    subject: subjectSelect.value,
     completed: false,
-  });
+  }));
 
   input.value = '';
   saveAndRender();
@@ -63,19 +63,21 @@ function renderTodos() {
   list.innerHTML = '';
 
   todos.forEach((todo) => {
+    const normalizedTodo = normalizeTodo(todo);
+
     const item = document.createElement('li');
-    item.className = `todo-item${todo.completed ? ' completed' : ''}`;
+    item.className = `todo-item${normalizedTodo.completed ? ' completed' : ''}`;
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = todo.completed;
-    checkbox.dataset.id = todo.id;
-    checkbox.setAttribute('aria-label', `${todo.text}を完了にする`);
+    checkbox.checked = normalizedTodo.completed;
+    checkbox.dataset.id = normalizedTodo.id;
+    checkbox.setAttribute('aria-label', `${normalizedTodo.text}を完了にする`);
 
     const content = document.createElement('div');
     content.className = 'todo-content';
 
-    const subjectName = normalizeSubject(todo.subject);
+    const subjectName = normalizedTodo.subject;
 
     const subject = document.createElement('span');
     subject.className = 'subject-badge';
@@ -84,15 +86,15 @@ function renderTodos() {
 
     const text = document.createElement('span');
     text.className = 'todo-text';
-    text.textContent = todo.text;
+    text.textContent = normalizedTodo.text;
 
     content.append(subject, text);
 
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
     deleteButton.className = 'delete-button';
-    deleteButton.dataset.id = todo.id;
-    deleteButton.setAttribute('aria-label', `${todo.text}を削除する`);
+    deleteButton.dataset.id = normalizedTodo.id;
+    deleteButton.setAttribute('aria-label', `${normalizedTodo.text}を削除する`);
     deleteButton.textContent = '×';
 
     item.append(checkbox, content, deleteButton);
@@ -123,14 +125,20 @@ function loadTodos() {
       return [];
     }
 
-    return parsedTodos.map((todo) => ({
-      ...todo,
-      subject: normalizeSubject(todo.subject),
-    }));
+    return parsedTodos.map(normalizeTodo);
   } catch (error) {
     console.warn('保存済みタスクの読み込みに失敗しました。', error);
     return [];
   }
+}
+
+function normalizeTodo(todo) {
+  return {
+    id: todo.id || createTodoId(),
+    text: String(todo.text || '').trim(),
+    subject: normalizeSubject(todo.subject),
+    completed: Boolean(todo.completed),
+  };
 }
 
 function normalizeSubject(subject) {
@@ -138,7 +146,7 @@ function normalizeSubject(subject) {
 }
 
 function createTodoId() {
-  if (crypto.randomUUID) {
+  if (globalThis.crypto && crypto.randomUUID) {
     return crypto.randomUUID();
   }
 
