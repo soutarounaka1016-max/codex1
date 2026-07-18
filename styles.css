@@ -145,9 +145,15 @@ h1 {
   background: #eef2ff;
 }
 
-#clear-completed:hover {
+#clear-completed:hover:not(:disabled) {
   color: #fff;
   background: var(--primary);
+}
+
+#clear-completed:disabled {
+  color: var(--done);
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .todo-list {
@@ -189,19 +195,19 @@ h1 {
   font-weight: 700;
 }
 
-.subject-数学 {
+.subject-badge[data-subject="数学"] {
   background: var(--math);
 }
 
-.subject-英語 {
+.subject-badge[data-subject="英語"] {
   background: var(--english);
 }
 
-.subject-物理 {
+.subject-badge[data-subject="物理"] {
   background: var(--physics);
 }
 
-.subject-化学 {
+.subject-badge[data-subject="化学"] {
   background: var(--chemistry);
 }
 

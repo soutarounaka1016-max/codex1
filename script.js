@@ -7,7 +7,8 @@ const emptyState = document.querySelector('#empty-state');
 const clearCompletedButton = document.querySelector('#clear-completed');
 
 const STORAGE_KEY = 'simple-todo-items';
-const DEFAULT_SUBJECT = '数学';
+const SUBJECTS = ['数学', '英語', '物理', '化学'];
+const DEFAULT_SUBJECT = SUBJECTS[0];
 let todos = loadTodos();
 
 renderTodos();
@@ -21,9 +22,9 @@ form.addEventListener('submit', (event) => {
   }
 
   todos.push({
-    id: crypto.randomUUID(),
+    id: createTodoId(),
     text,
-    subject: subjectSelect.value,
+    subject: normalizeSubject(subjectSelect.value),
     completed: false,
   });
 
@@ -74,9 +75,12 @@ function renderTodos() {
     const content = document.createElement('div');
     content.className = 'todo-content';
 
+    const subjectName = normalizeSubject(todo.subject);
+
     const subject = document.createElement('span');
-    subject.className = `subject-badge subject-${todo.subject}`;
-    subject.textContent = todo.subject;
+    subject.className = 'subject-badge';
+    subject.dataset.subject = subjectName;
+    subject.textContent = subjectName;
 
     const text = document.createElement('span');
     text.className = 'todo-text';
@@ -108,10 +112,35 @@ function saveAndRender() {
 
 function loadTodos() {
   const savedTodos = localStorage.getItem(STORAGE_KEY);
-  return savedTodos
-    ? JSON.parse(savedTodos).map((todo) => ({
+  if (!savedTodos) {
+    return [];
+  }
+
+  try {
+    const parsedTodos = JSON.parse(savedTodos);
+
+    if (!Array.isArray(parsedTodos)) {
+      return [];
+    }
+
+    return parsedTodos.map((todo) => ({
       ...todo,
-      subject: todo.subject || DEFAULT_SUBJECT,
-    }))
-    : [];
+      subject: normalizeSubject(todo.subject),
+    }));
+  } catch (error) {
+    console.warn('保存済みタスクの読み込みに失敗しました。', error);
+    return [];
+  }
+}
+
+function normalizeSubject(subject) {
+  return SUBJECTS.includes(subject) ? subject : DEFAULT_SUBJECT;
+}
+
+function createTodoId() {
+  if (crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  return `todo-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
