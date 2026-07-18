@@ -1,11 +1,13 @@
 const form = document.querySelector('#todo-form');
 const input = document.querySelector('#todo-input');
+const subjectSelect = document.querySelector('#subject-select');
 const list = document.querySelector('#todo-list');
 const count = document.querySelector('#todo-count');
 const emptyState = document.querySelector('#empty-state');
 const clearCompletedButton = document.querySelector('#clear-completed');
 
 const STORAGE_KEY = 'simple-todo-items';
+const DEFAULT_SUBJECT = '未設定';
 let todos = loadTodos();
 
 renderTodos();
@@ -21,10 +23,12 @@ form.addEventListener('submit', (event) => {
   todos.push({
     id: crypto.randomUUID(),
     text,
+    subject: subjectSelect.value,
     completed: false,
   });
 
   input.value = '';
+  subjectSelect.value = '数学';
   saveAndRender();
 });
 
@@ -72,6 +76,10 @@ function renderTodos() {
     text.className = 'todo-text';
     text.textContent = todo.text;
 
+    const subject = document.createElement('span');
+    subject.className = 'todo-subject';
+    subject.textContent = todo.subject || DEFAULT_SUBJECT;
+
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
     deleteButton.className = 'delete-button';
@@ -79,7 +87,7 @@ function renderTodos() {
     deleteButton.setAttribute('aria-label', `${todo.text}を削除する`);
     deleteButton.textContent = '×';
 
-    item.append(checkbox, text, deleteButton);
+    item.append(checkbox, text, subject, deleteButton);
     list.appendChild(item);
   });
 
@@ -96,5 +104,12 @@ function saveAndRender() {
 
 function loadTodos() {
   const savedTodos = localStorage.getItem(STORAGE_KEY);
-  return savedTodos ? JSON.parse(savedTodos) : [];
+  if (!savedTodos) {
+    return [];
+  }
+
+  return JSON.parse(savedTodos).map((todo) => ({
+    ...todo,
+    subject: todo.subject || DEFAULT_SUBJECT,
+  }));
 }
