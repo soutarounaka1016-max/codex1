@@ -2,40 +2,191 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>シンプル ToDo アプリ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eef2ff">
+  <title>受験勉強キャンバス</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app" aria-labelledby="app-title">
-    <section class="hero">
-      <p class="eyebrow">HTML・CSS・JavaScript</p>
-      <h1 id="app-title">シンプル ToDo</h1>
-      <p class="lead">今日やることを追加して、完了したらチェックしましょう。</p>
+  <main class="app-shell" aria-labelledby="app-title">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">STUDY CANVAS</p>
+        <h1 id="app-title">受験勉強キャンバス</h1>
+        <p class="lead">今日・今週・考えごとを、混ぜずに整理する。</p>
+      </div>
+      <p id="storage-status" class="storage-status" role="status" aria-live="polite">この端末のブラウザに自動保存します</p>
+    </header>
+
+    <nav class="tab-list" aria-label="ページ切り替え" role="tablist">
+      <button class="tab-button active" id="tab-today" type="button" role="tab" aria-selected="true" aria-controls="panel-today" data-tab="today">今日</button>
+      <button class="tab-button" id="tab-weekly" type="button" role="tab" aria-selected="false" aria-controls="panel-weekly" data-tab="weekly">週間目標</button>
+      <button class="tab-button" id="tab-note" type="button" role="tab" aria-selected="false" aria-controls="panel-note" data-tab="note">自由ノート</button>
+      <button class="tab-button" id="tab-backup" type="button" role="tab" aria-selected="false" aria-controls="panel-backup" data-tab="backup">バックアップ</button>
+    </nav>
+
+    <section class="tab-panel active" id="panel-today" role="tabpanel" aria-labelledby="tab-today" data-panel="today">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">TODAY</p>
+          <h2>今日のタスクカード</h2>
+          <p>今日やる内容だけを置くキャンバスです。</p>
+        </div>
+        <div class="summary-card" aria-live="polite">
+          <strong id="today-remaining">0件</strong>
+          <span id="today-minutes">予定 0分</span>
+        </div>
+      </div>
+
+      <form id="today-form" class="task-form" autocomplete="off">
+        <input type="hidden" id="today-edit-id">
+        <label>
+          <span>科目</span>
+          <select id="today-subject" required>
+            <option value="数学">数学</option>
+            <option value="英語">英語</option>
+            <option value="物理">物理</option>
+            <option value="化学">化学</option>
+            <option value="国語">国語</option>
+            <option value="情報">情報</option>
+            <option value="その他">その他</option>
+          </select>
+        </label>
+        <label class="task-title-field">
+          <span>内容</span>
+          <input id="today-title" type="text" placeholder="例：微積の典型問題" maxlength="100" required>
+        </label>
+        <label>
+          <span>予定時間</span>
+          <div class="minutes-input">
+            <input id="today-minutes-input" type="number" min="5" max="600" step="5" inputmode="numeric" placeholder="60" required>
+            <span>分</span>
+          </div>
+        </label>
+        <div class="form-actions">
+          <button class="primary-button" id="today-submit" type="submit">カードを追加</button>
+          <button class="secondary-button hidden" id="today-cancel-edit" type="button">編集をやめる</button>
+        </div>
+      </form>
+
+      <div id="today-list" class="task-grid" aria-live="polite"></div>
+      <p id="today-empty" class="empty-state">まだカードがありません。今日やることを1つだけ追加してみましょう。</p>
     </section>
 
-    <form id="todo-form" class="todo-form" autocomplete="off">
-      <label class="sr-only" for="todo-input">新しいToDo</label>
-      <input id="todo-input" type="text" placeholder="例: 買い物に行く" maxlength="80" required>
-      <label class="sr-only" for="subject-select">科目</label>
-      <select id="subject-select" aria-label="科目を選択">
-        <option value="数学">数学</option>
-        <option value="英語">英語</option>
-        <option value="物理">物理</option>
-        <option value="化学">化学</option>
-      </select>
-      <button type="submit">追加</button>
-    </form>
+    <section class="tab-panel" id="panel-weekly" role="tabpanel" aria-labelledby="tab-weekly" data-panel="weekly" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">THIS WEEK</p>
+          <h2>週間目標キャンバス</h2>
+          <p>今日の予定とは別に保存します。ここから今日の予定が自動作成されることはありません。</p>
+        </div>
+        <div class="summary-card" aria-live="polite">
+          <strong id="weekly-remaining">0件</strong>
+          <span id="weekly-minutes">予定 0分</span>
+        </div>
+      </div>
 
-    <section class="toolbar" aria-label="ToDoの操作">
-      <p id="todo-count">0 件の未完了</p>
-      <button id="clear-completed" type="button">完了済みを削除</button>
+      <form id="weekly-form" class="task-form" autocomplete="off">
+        <input type="hidden" id="weekly-edit-id">
+        <label>
+          <span>科目</span>
+          <select id="weekly-subject" required>
+            <option value="数学">数学</option>
+            <option value="英語">英語</option>
+            <option value="物理">物理</option>
+            <option value="化学">化学</option>
+            <option value="国語">国語</option>
+            <option value="情報">情報</option>
+            <option value="その他">その他</option>
+          </select>
+        </label>
+        <label class="task-title-field">
+          <span>目標</span>
+          <input id="weekly-title" type="text" placeholder="例：力学を10題解く" maxlength="100" required>
+        </label>
+        <label>
+          <span>予定時間</span>
+          <div class="minutes-input">
+            <input id="weekly-minutes-input" type="number" min="5" max="3000" step="5" inputmode="numeric" placeholder="180" required>
+            <span>分</span>
+          </div>
+        </label>
+        <div class="form-actions">
+          <button class="primary-button" id="weekly-submit" type="submit">目標を追加</button>
+          <button class="secondary-button hidden" id="weekly-cancel-edit" type="button">編集をやめる</button>
+        </div>
+      </form>
+
+      <div id="weekly-list" class="task-grid" aria-live="polite"></div>
+      <p id="weekly-empty" class="empty-state">週間目標はまだありません。今週終わらせたいことを置いてください。</p>
     </section>
 
-    <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
+    <section class="tab-panel" id="panel-note" role="tabpanel" aria-labelledby="tab-note" data-panel="note" hidden>
+      <div class="section-heading note-heading">
+        <div>
+          <p class="section-kicker">FREE NOTE</p>
+          <h2>自由ノート</h2>
+          <p>模試の反省、長期計画、考えの整理などを自由に書けます。</p>
+        </div>
+        <span id="note-count" class="character-count">0文字</span>
+      </div>
+      <label class="note-label" for="free-note">ノート本文</label>
+      <textarea id="free-note" class="free-note" maxlength="20000" placeholder="例：次の模試までに改善すること&#10;・数学は計算ミスの原因を記録する&#10;・英語長文は時間配分を確認する"></textarea>
+      <p class="save-hint">入力内容は自動保存されます。</p>
+    </section>
 
-    <p id="empty-state" class="empty-state">まだToDoがありません。上の入力欄から追加してください。</p>
+    <section class="tab-panel" id="panel-backup" role="tabpanel" aria-labelledby="tab-backup" data-panel="backup" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">BACKUP</p>
+          <h2>バックアップと復元</h2>
+          <p>今日のカード、週間目標、自由ノートを1つのJSONファイルに保存します。</p>
+        </div>
+      </div>
+
+      <div class="backup-grid">
+        <article class="backup-card">
+          <h3>バックアップを保存</h3>
+          <p>現在のデータをファイルとしてダウンロードします。別端末への自動同期ではありません。</p>
+          <button id="export-backup" class="primary-button" type="button">バックアップファイルを保存</button>
+        </article>
+
+        <article class="backup-card warning-card">
+          <h3>バックアップから復元</h3>
+          <p>ファイルの内容を確認した後、現在のデータを置き換えます。復元直前の状態も自動で別ファイルに保存します。</p>
+          <label class="file-picker">
+            <span>バックアップファイルを選ぶ</span>
+            <input id="restore-file" type="file" accept="application/json,.json">
+          </label>
+          <div id="restore-preview" class="restore-preview hidden" role="status" aria-live="polite"></div>
+          <button id="confirm-restore" class="danger-button hidden" type="button">確認した内容で復元する</button>
+          <button id="cancel-restore" class="secondary-button hidden" type="button">選択を取り消す</button>
+        </article>
+      </div>
+      <p id="backup-message" class="backup-message" role="status" aria-live="polite"></p>
+    </section>
   </main>
+
+  <template id="task-card-template">
+    <article class="task-card">
+      <label class="complete-control">
+        <input class="task-checkbox" type="checkbox">
+        <span class="checkmark" aria-hidden="true"></span>
+        <span class="sr-only">完了状態を切り替える</span>
+      </label>
+      <div class="task-card-body">
+        <div class="task-meta">
+          <span class="subject-badge"></span>
+          <span class="minutes-badge"></span>
+        </div>
+        <h3 class="task-card-title"></h3>
+      </div>
+      <div class="task-actions">
+        <button class="edit-button" type="button">編集</button>
+        <button class="delete-button" type="button">削除</button>
+      </div>
+    </article>
+  </template>
 
   <script src="script.js"></script>
 </body>
